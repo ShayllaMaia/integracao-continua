@@ -1,36 +1,21 @@
 name: CD Front-end
 
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
+on: 
+  workflow_dispatch:
+  
+jobs: 
+  deploy: 
     runs-on: ubuntu-latest
-    name: Deploy to Vercel
-    timeout-minutes: 10
+    name: Deploy Railway
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Install Dependencies
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with: 
+          node-version: 18
+      - name: Instalação do cliente Railway
+        run: npm install -g @railway/cli
+      - name: Deploy
         working-directory: sgcmapp/
-        run: |
-          npm install --legacy-peer-deps
-
-      - name: Build
-        working-directory: sgcmapp/
-        run: npm run build
-
-      - name: Deploy to Vercel
-        working-directory: sgcmapp/
-        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
+        run: railway up --detach --service sgcmapi 
+        env: 
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
